@@ -12,8 +12,8 @@ import {
 const Reveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
   <div className={`overflow-hidden ${className}`}>
     <motion.div
-      initial={{ y: "100%", opacity: 0 }}
-      whileInView={{ y: 0, opacity: 1 }}
+      initial={{ y: "100%", opacity: 0, filter: "blur(12px)" }}
+      whileInView={{ y: 0, opacity: 1, filter: "blur(0px)" }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 1.2, delay, ease: [0.16, 1, 0.3, 1] }}
     >
@@ -29,6 +29,7 @@ export default function App() {
   const heroTextY = useTransform(scrollY, [0, 1000], [0, 200]);
   const heroOpacity = useTransform(scrollY, [0, 800], [1, 0]);
   const heroBgScale = useTransform(scrollY, [0, 1000], [1, 1.15]);
+  const heroBlur = useTransform(scrollY, [0, 800], ["blur(0px)", "blur(20px)"]);
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground font-sans">
@@ -51,7 +52,7 @@ export default function App() {
       {/* 1. Hero Fullscreen with Parallax */}
       <section className="relative h-screen w-full overflow-hidden bg-black">
         <motion.div 
-          style={{ scale: heroBgScale }} 
+          style={{ scale: heroBgScale, filter: heroBlur }} 
           className="absolute inset-0 w-full h-full"
         >
           <img 
@@ -64,39 +65,72 @@ export default function App() {
         </motion.div>
 
         <motion.div 
-          style={{ y: heroTextY, opacity: heroOpacity }}
+          style={{ y: heroTextY, opacity: heroOpacity, filter: heroBlur }}
           className="absolute inset-0 flex flex-col justify-end px-6 md:px-12 pb-24 md:pb-32 z-10 text-white"
         >
           <div className="overflow-hidden mb-6">
-            <motion.p 
-              initial={{ y: "100%", opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="text-xs md:text-sm tracking-[0.4em] uppercase font-light text-white/80"
-            >
-              Maestría en Estética Clínica
-            </motion.p>
+            <p className="text-xs md:text-sm tracking-[0.4em] uppercase font-light text-white/80">
+              {"Maestría en Estética Clínica".split(' ').map((word, wordIndex, array) => (
+                <React.Fragment key={wordIndex}>
+                  <span className="inline-block whitespace-nowrap">
+                    {word.split('').map((char, charIndex) => (
+                      <motion.span
+                        key={charIndex}
+                        initial={{ y: "100%", opacity: 0, filter: "blur(8px)" }}
+                        animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                        transition={{ duration: 1.2, delay: 0.2 + (wordIndex * 0.1) + (charIndex * 0.02), ease: [0.16, 1, 0.3, 1] }}
+                        className="inline-block"
+                      >
+                        {char}
+                      </motion.span>
+                    ))}
+                  </span>
+                  {wordIndex !== array.length - 1 && " "}
+                </React.Fragment>
+              ))}
+            </p>
           </div>
           
           <h1 className="font-serif text-[15vw] md:text-[12vw] leading-[0.85] tracking-tighter uppercase">
             <div className="overflow-hidden">
-              <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 1.4, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              >
-                El arte de la
-              </motion.div>
+              {"El arte de la".split(' ').map((word, wordIndex, array) => (
+                <React.Fragment key={wordIndex}>
+                  <span className="inline-block whitespace-nowrap">
+                    {word.split('').map((char, charIndex) => (
+                      <motion.span
+                        key={charIndex}
+                        initial={{ y: "100%", filter: "blur(8px)" }}
+                        animate={{ y: 0, filter: "blur(0px)" }}
+                        transition={{ duration: 1.4, delay: 0.4 + (wordIndex * 0.1) + (charIndex * 0.03), ease: [0.16, 1, 0.3, 1] }}
+                        className="inline-block"
+                      >
+                        {char}
+                      </motion.span>
+                    ))}
+                  </span>
+                  {wordIndex !== array.length - 1 && " "}
+                </React.Fragment>
+              ))}
             </div>
-            <div className="overflow-hidden">
-              <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 1.4, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="italic font-light text-white/90 lowercase"
-              >
-                precisión clínica
-              </motion.div>
+            <div className="overflow-hidden italic font-light text-white/90 lowercase">
+              {"precisión clínica".split(' ').map((word, wordIndex, array) => (
+                <React.Fragment key={wordIndex}>
+                  <span className="inline-block whitespace-nowrap">
+                    {word.split('').map((char, charIndex) => (
+                      <motion.span
+                        key={charIndex}
+                        initial={{ y: "100%", filter: "blur(8px)" }}
+                        animate={{ y: 0, filter: "blur(0px)" }}
+                        transition={{ duration: 1.4, delay: 0.8 + (wordIndex * 0.1) + (charIndex * 0.03), ease: [0.16, 1, 0.3, 1] }}
+                        className="inline-block"
+                      >
+                        {char}
+                      </motion.span>
+                    ))}
+                  </span>
+                  {wordIndex !== array.length - 1 && " "}
+                </React.Fragment>
+              ))}
             </div>
           </h1>
         </motion.div>
