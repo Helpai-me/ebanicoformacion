@@ -1,263 +1,226 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SmokeEffect from './components/SmokeEffect';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const SCENES = [
+  {
+    id: 'hero',
+    bg: '/img/bg-4.png',
+    kicker: 'PROGRAMA',
+    titleTop: 'Formación',
+    titleBottom: 'clínica real',
+    desc: 'Maestría en Estética Clínica dentro de una clínica real.',
+    obj: '/img/seccion-1.png',
+    objClass: 'obj-hero',
+  },
+  {
+    id: 'problem',
+    bg: '/img/bg-1.png',
+    kicker: 'EL PROBLEMA',
+    titleTop: 'has estudiado',
+    titleBottom: 'teoría que no aplicas',
+    desc: 'Sabes infiltrar, pero no tienes claro cuándo, por qué ni para quién. Consigues empezar y sientes que improvisas.',
+    obj: '/img/seccion-2-2.png',
+    objClass: 'obj-problem',
+  },
+  {
+    id: 'bridge',
+    bg: '/img/bg-2.png',
+    kicker: 'LA SOLUCIÓN',
+    titleTop: 'este programa',
+    titleBottom: 'cierra la brecha',
+    desc: 'Una inmersión completa en una clínica real. Paciente, tratamiento y gestión forman parte del mismo proceso.',
+    obj: '/img/seccion-3.png',
+    objClass: 'obj-bridge',
+  },
+  {
+    id: 'pillars',
+    bg: '/img/bg-3.png',
+    kicker: 'NUESTRO OBJETIVO',
+    titleTop: 'piensa, diseña',
+    titleBottom: 'y trabaja',
+    desc: 'Piensa como un clínico. Diseña tratamientos con sentido. Trabaja en una clínica real desde el primer día.',
+    obj: '/img/seccion-4-2.png',
+    objClass: 'obj-pillars',
+  },
+  {
+    id: 'cta',
+    bg: '/img/bg-4.png',
+    kicker: '¿ES PARA TI?',
+    titleTop: 'para quienes',
+    titleBottom: 'quieren más',
+    desc: 'Para profesionales que sienten que les falta seguridad, que no quieren seguir improvisando y quieren trabajar con criterio.',
+    obj: '/img/seccion-4-1.png',
+    objClass: 'obj-cta',
+  },
+];
+
 export default function App() {
   const mainRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useGSAP(() => {
-    const sceneNodes = gsap.utils.toArray<HTMLElement>('.scene');
+    const sceneEls = gsap.utils.toArray<HTMLElement>('.scene');
+    const total = sceneEls.length;
 
-    gsap.set(sceneNodes, { autoAlpha: 0 });
-    gsap.set(sceneNodes[0], { autoAlpha: 1 });
+    gsap.set(sceneEls, { autoAlpha: 0 });
+    gsap.set(sceneEls[0], { autoAlpha: 1 });
 
-    const mainTl = gsap.timeline({
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: '.scroll-height',
         start: 'top top',
         end: 'bottom bottom',
-        scrub: 1.2,
+        scrub: 1.5,
+        onUpdate: (self) => {
+          const idx = Math.min(
+            total - 1,
+            Math.floor(self.progress * total),
+          );
+          setActiveIndex(idx);
+        },
       },
     });
 
-    sceneNodes.forEach((scene, index) => {
-      const bg = scene.querySelector('.full-bg');
-      const text = scene.querySelector('.text-layer');
-      const object = scene.querySelector('.object-layer');
-      const startTime = index;
+    sceneEls.forEach((scene, i) => {
+      const bg = scene.querySelector('.full-bg') as HTMLElement;
+      const text = scene.querySelector('.text-layer') as HTMLElement;
+      const objWrapper = scene.querySelector('.scene-obj-wrapper') as HTMLElement;
+      const t = i; // scene start time
 
-      if (index !== 0) {
-        mainTl.fromTo(
-          scene,
-          { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 0.5 },
-          startTime,
-        );
+      // ── Fade in (skip first) ──
+      if (i > 0) {
+        tl.fromTo(scene, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, t);
       }
 
+      // ── Background: zoom in from 1.4 → 1, then zoom out ──
       if (bg) {
-        mainTl
-          .fromTo(
-            bg,
-            { scale: 1.5, filter: 'blur(20px)' },
-            { scale: 1, filter: 'blur(0px)', duration: 0.8, ease: 'none' },
-            startTime,
-          )
-          .to(
-            bg,
-            { scale: 1.3, filter: 'blur(20px)', duration: 0.8, ease: 'none' },
-            startTime + 0.8,
-          );
-      }
-
-      if (object) {
-        mainTl.fromTo(
-          object,
-          { yPercent: 100, scale: 0.5 },
-          { yPercent: -100, scale: 1.4, duration: 1.6, ease: 'none' },
-          startTime,
+        tl.fromTo(
+          bg,
+          { scale: 1.4, filter: 'blur(16px)' },
+          { scale: 1, filter: 'blur(0px)', duration: 0.6, ease: 'power2.out' },
+          t,
+        ).to(
+          bg,
+          { scale: 1.15, filter: 'blur(12px)', duration: 0.6, ease: 'none' },
+          t + 0.9,
         );
       }
 
+      // ── Text: enter from bottom with stagger ──
       if (text) {
-        const fromY = index === 0 ? 0 : 60;
-        mainTl.fromTo(
+        const fromY = i === 0 ? 0 : 40;
+        tl.fromTo(
           text,
-          { yPercent: fromY },
-          { yPercent: -60, duration: 1.6, ease: 'none' },
-          startTime,
+          { yPercent: fromY, autoAlpha: i === 0 ? 1 : 0 },
+          { yPercent: 0, autoAlpha: 1, duration: 0.5, ease: 'power2.out' },
+          t + 0.1,
+        ).to(
+          text,
+          { yPercent: -30, autoAlpha: 0, duration: 0.5, ease: 'power2.in' },
+          t + 1,
         );
       }
 
-      if (index !== sceneNodes.length - 1) {
-        mainTl.to(scene, { autoAlpha: 0, duration: 0.5 }, startTime + 1.1);
+      // ── Object: enter with delay, parallax float ──
+      if (objWrapper) {
+        if (i === 0) {
+          // Hero object: fully visible on initial load
+          tl.to(
+            objWrapper,
+            { yPercent: -40, scale: 1.1, autoAlpha: 0, duration: 0.6, ease: 'none' },
+            t + 0.9,
+          );
+        } else {
+          // Other scenes: animate in
+          tl.fromTo(
+            objWrapper,
+            { yPercent: 60, scale: 0.7, autoAlpha: 0 },
+            { yPercent: 0, scale: 1, autoAlpha: 1, duration: 0.6, ease: 'power2.out' },
+            t + 0.15,
+          ).to(
+            objWrapper,
+            { yPercent: -40, scale: 1.1, autoAlpha: 0, duration: 0.6, ease: 'none' },
+            t + 0.9,
+          );
+        }
+      }
+
+      // ── Fade out (skip last) ──
+      if (i < total - 1) {
+        tl.to(scene, { autoAlpha: 0, duration: 0.3 }, t + 1.3);
       }
     });
   }, { scope: mainRef });
 
+  const scrollToScene = useCallback((dir: 'up' | 'down') => {
+    const total = SCENES.length;
+    const next = dir === 'down'
+      ? Math.min(activeIndex + 1, total - 1)
+      : Math.max(activeIndex - 1, 0);
+    const scrollTarget = (next / total) * document.querySelector('.scroll-height')!.scrollHeight;
+    window.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+  }, [activeIndex]);
+
   return (
     <div ref={mainRef} className="slider-app">
+      {/* ── Fixed Top Menu ── */}
+      <header className="slider-header">
+        <div className="header-logo">EBÁNICO</div>
+        <nav className="header-nav">
+          <a href="#">Programa</a>
+          <a href="#">Metodología</a>
+          <a href="#" className="nav-cta">Solicitar admisión</a>
+        </nav>
+      </header>
+
       <div id="viewport">
-
-        {/* ─── 1. HERO ─── */}
-        <section className="scene" id="hero">
-          <div
-            className="layer full-bg"
-            style={{ backgroundImage: 'url(/img/bg-4.png)' }}
-          />
-          <div className="layer text-layer">
-            <div className="scene-kicker">Programa</div>
-            <h2>
-              Ebánico
-              <br />
-              <span>Formación clínica real</span>
-            </h2>
-            <p>Maestría en Estética Clínica</p>
-          </div>
-          <div className="layer object-layer">
-            <div className="scene-asset-wrap">
-              <img src="/img/seccion-1.png" className="asset-sc1-main" alt="" />
+        {SCENES.map((sc, i) => (
+          <section key={sc.id} className="scene" id={sc.id}>
+            <div
+              className="layer full-bg"
+              style={{ backgroundImage: `url(${sc.bg})` }}
+            />
+            <div className="layer text-layer">
+              <span className="scene-kicker">{sc.kicker}</span>
+              <h2>
+                {sc.titleTop}
+                <br />
+                <em>{sc.titleBottom}</em>
+              </h2>
+              <p className="scene-desc">{sc.desc}</p>
             </div>
-          </div>
-        </section>
-
-        {/* ─── 2. THE PROBLEM ─── */}
-        <section className="scene" id="problem">
-          <div
-            className="layer full-bg"
-            style={{ backgroundImage: 'url(/img/bg-1.png)' }}
-          />
-          <div className="layer text-layer">
-            <h2>
-              Has estudiado
-              <br />
-              <span>teoría que luego no aplicas</span>
-            </h2>
-            <p>
-              Sabes infiltrar, pero no tienes claro cuándo, por qué ni para
-              quién.
-            </p>
-            <div className="quotes-stack">
-              <blockquote>
-                "Consigues empezar y sientes que improvisas."
-              </blockquote>
-              <blockquote>
-                "Tengo el título, pero ¿por dónde empiezo?"
-              </blockquote>
-              <blockquote>
-                "Precios sin criterio. Dudas en la elección del mejor
-                tratamiento. Pacientes sin miradas a futuro."
-              </blockquote>
-            </div>
-          </div>
-          <div className="layer object-layer">
-            <div className="scene-asset-wrap">
-              <img
-                src="/img/seccion-2-2.png"
-                className="asset-sc2-top"
-                alt=""
-              />
-              <img
-                src="/img/seccion-2-1.png"
-                className="asset-sc2-bottom"
-                alt=""
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* ─── 3. THE SOLUTION ─── */}
-        <section className="scene" id="bridge">
-          <div
-            className="layer full-bg"
-            style={{ backgroundImage: 'url(/img/bg-2.png)' }}
-          />
-          <div className="layer text-layer">
-            <h2>
-              Este programa
-              <br />
-              <span>cierra esa brecha</span>
-            </h2>
-            <p>
-              Una inmersión completa dentro de una clínica real, donde aprenderás
-              cómo se trabaja de verdad. Paciente, tratamiento y gestión forman
-              parte del mismo proceso.
-            </p>
-            <p className="accent-line">
-              Sales preparado para trabajar, no para seguir formándote.
-            </p>
-          </div>
-          <div className="layer object-layer">
-            <div className="scene-asset-wrap">
-              <img
-                src="/img/seccion-3.png"
-                className="asset-sc3-main"
-                alt=""
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* ─── 4. THREE PILLARS ─── */}
-        <section className="scene" id="pillars">
-          <div
-            className="layer full-bg"
-            style={{ backgroundImage: 'url(/img/bg-3.png)' }}
-          />
-          <div className="layer text-layer pillars-text">
-            <div className="scene-kicker">Nuestro objetivo</div>
-            <div className="pillars-grid">
-              <div className="pillar">
-                <span className="pillar-num">01</span>
-                <h3>Piensa como un clínico</h3>
-                <p>
-                  Analizar pacientes reales desde cero. Saber cuándo tratar… y
-                  cuándo no. Evitar sobretratamientos. Que los pacientes te
-                  elijan para cuidarse y envejecer contigo.
-                </p>
-              </div>
-              <div className="pillar">
-                <span className="pillar-num">02</span>
-                <h3>Diseña tratamientos con sentido</h3>
-                <p>
-                  Planes a corto, medio y largo plazo. Combinación real de
-                  técnicas. Cómo hacer entender al paciente el proceso.
-                </p>
-              </div>
-              <div className="pillar">
-                <span className="pillar-num">03</span>
-                <h3>Trabaja en una clínica real</h3>
-                <p>
-                  Cómo se recibe a un paciente. Cómo se plantea un presupuesto.
-                  Cómo se estructura un tratamiento completo. Gestión económica,
-                  licencias y organización.
-                </p>
+            <div className="layer object-layer">
+              <div className={`scene-obj-wrapper ${sc.objClass}`}>
+                <img src={sc.obj} className="scene-obj" alt="" />
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ))}
 
-        {/* ─── 5. WHO + CTA ─── */}
-        <section className="scene" id="cta">
-          <div
-            className="layer full-bg"
-            style={{ backgroundImage: 'url(/img/bg-4.png)' }}
-          />
-          <div className="layer text-layer">
-            <div className="scene-kicker">¿Es para ti?</div>
-            <h2>
-              Para profesionales
-              <br />
-              <span>que quieren más</span>
-            </h2>
-            <div className="who-list">
-              <p>Sienten que les falta seguridad en consulta</p>
-              <p>No quieren seguir improvisando</p>
-              <p>Quieren trabajar con criterio</p>
-              <p>
-                Entienden que la estética es un todo en sí misma y no la suma de
-                sus partes por separado
-              </p>
-            </div>
+        {/* ── Bottom Bar ── */}
+        <div className="slide-bar">
+          <span className="slide-counter">
+            {String(activeIndex + 1).padStart(2, '0')}-
+            {String(SCENES.length).padStart(2, '0')}
+          </span>
+          <div className="slide-nav">
+            <button onClick={() => scrollToScene('up')} aria-label="Previous">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="18 15 12 9 6 15" />
+              </svg>
+            </button>
+            <button onClick={() => scrollToScene('down')} aria-label="Next">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
           </div>
-          <div className="layer object-layer">
-            <div className="scene-asset-wrap">
-              <img
-                src="/img/seccion-4-2.png"
-                className="asset-sc4-top"
-                alt=""
-              />
-              <img
-                src="/img/seccion-4-1.png"
-                className="asset-sc4-bottom"
-                alt=""
-              />
-            </div>
-          </div>
-        </section>
+        </div>
       </div>
 
       <div className="scroll-height" />

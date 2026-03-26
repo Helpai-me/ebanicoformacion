@@ -34,12 +34,23 @@
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
   @keyframes accordion-down {
-    from { height: 0; }
-    to { height: var(--radix-accordion-content-height); }
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+    }
   }
+
   @keyframes accordion-up {
-    from { height: var(--radix-accordion-content-height); }
-    to { height: 0; }
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+
+    to {
+      height: 0;
+    }
   }
 }
 
@@ -89,7 +100,8 @@
 }
 
 /* ═══════════════════════════════════════════════
-   CINEMATIC PARALLAX SLIDER
+   ARTISTIC PARALLAX SLIDER
+   Inspired by Slider Revolution template
    ═══════════════════════════════════════════════ */
 
 @layer components {
@@ -99,6 +111,64 @@
   .slider-app {
     background: #000;
     color: #fff;
+  }
+
+  /* ── Fixed Top Menu ── */
+
+  .slider-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem 6vw;
+    pointer-events: auto;
+  }
+
+  .header-logo {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-style: italic;
+    color: #fff;
+    letter-spacing: 0.05em;
+  }
+
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .header-nav a {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: color 0.3s ease;
+  }
+
+  .header-nav a:hover {
+    color: #fff;
+  }
+
+  .header-nav a.nav-cta {
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+
+  .header-nav a.nav-cta:hover {
+    background: #fff;
+    color: #000;
   }
 
   #viewport {
@@ -114,8 +184,8 @@
     position: absolute;
     inset: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-end;
+    justify-content: flex-start;
     opacity: 0;
     visibility: hidden;
     overflow: hidden;
@@ -132,6 +202,8 @@
     will-change: transform, filter, opacity;
   }
 
+  /* ── Background Layer ── */
+
   .full-bg {
     inset: -10%;
     background-size: cover;
@@ -139,280 +211,213 @@
     z-index: 1;
   }
 
-  /* ── Text Layer Base ── */
+  /* ── Text Layer ── */
 
   .text-layer {
-    z-index: 50;
-    width: 100%;
-    padding: 0 6vw;
-    text-align: center;
-    color: #fff;
-    pointer-events: none;
-    text-shadow: 0 6px 32px rgba(0, 0, 0, 0.5);
-  }
-
-  /* Per-scene text positioning */
-  #hero .text-layer {
-    top: 0;
+    z-index: 30;
+    position: absolute;
+    left: 0;
     bottom: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    padding: 0 6vw 12vh;
+    color: #fff;
+    pointer-events: none;
   }
 
-  #problem .text-layer,
-  #cta .text-layer {
-    top: auto;
-    bottom: 10%;
-  }
-
-  #bridge .text-layer {
-    top: 12%;
-  }
-
-  #pillars .text-layer {
-    top: auto;
-    bottom: 6%;
-  }
-
-  /* ── Typography ── */
-
-  .text-layer .scene-kicker {
-    margin-bottom: 1.2rem;
+  .scene-kicker {
+    margin-bottom: 0.8rem;
     font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.6em;
+    font-weight: 700;
+    letter-spacing: 0.5em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.72);
+    color: rgba(255, 255, 255, 0.6);
   }
 
   .text-layer h2 {
     margin: 0;
-    font-family: var(--font-serif);
-    font-size: clamp(3rem, 12vw, 10rem);
-    line-height: 0.84;
-    letter-spacing: -0.06em;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-
-  .text-layer h2 span {
-    font-style: italic;
-    font-weight: 300;
-    text-transform: none;
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  .text-layer p {
-    max-width: 46rem;
-    margin: 1.5rem auto 0;
-    font-size: clamp(0.95rem, 1.5vw, 1.2rem);
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  /* ── Quote Bubbles (Problem Scene) ── */
-
-  .quotes-stack {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.75rem;
-    margin-top: 2rem;
-    max-width: 56rem;
-    margin-left: auto;
-    margin-right: auto;
-    pointer-events: auto;
-  }
-
-  .quotes-stack blockquote {
-    display: inline-block;
-    margin: 0;
-    padding: 0.7rem 1.4rem;
     font-family: var(--font-sans);
-    font-size: clamp(0.82rem, 1.2vw, 1rem);
+    font-size: clamp(3.2rem, 10vw, 8.5rem);
+    line-height: 0.88;
+    letter-spacing: -0.04em;
+    text-transform: lowercase;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 4px 60px rgba(0, 0, 0, 0.4);
+    max-width: 70vw;
+  }
+
+  .text-layer h2 em {
     font-style: italic;
+    font-family: var(--font-serif);
     font-weight: 400;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.95);
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .scene-desc {
+    max-width: 32rem;
+    margin-top: 1.5rem;
+    font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.6);
     text-shadow: none;
   }
 
-  /* ── Accent Line (Solution Scene) ── */
-
-  .accent-line {
-    font-family: var(--font-serif) !important;
-    font-size: clamp(1.3rem, 2.5vw, 2.2rem) !important;
-    font-style: italic;
-    font-weight: 300;
-    color: #ffddb6 !important;
-    margin-top: 2.4rem !important;
-  }
-
-  /* ── Pillars Grid (Objectives Scene) ── */
-
-  .pillars-text {
-    text-align: left !important;
-    display: flex;
-    flex-direction: column;
-    padding: 0 6vw !important;
-  }
-
-  .pillars-text .scene-kicker {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .pillars-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2.5rem;
-    width: 100%;
-    max-width: 72rem;
-    margin: 0 auto;
-  }
-
-  .pillar {
-    padding: 2rem 1.5rem;
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 1rem;
-  }
-
-  .pillar-num {
-    display: block;
-    font-family: var(--font-serif);
-    font-size: 2.4rem;
-    font-weight: 300;
-    color: rgba(255, 255, 255, 0.2);
-    margin-bottom: 0.6rem;
-    line-height: 1;
-  }
-
-  .pillar h3 {
-    font-family: var(--font-serif);
-    font-size: clamp(1.2rem, 2vw, 1.6rem);
-    font-weight: 500;
-    color: #fff;
-    margin: 0 0 0.8rem;
-    line-height: 1.15;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  }
-
-  .pillar p {
-    margin: 0 !important;
-    font-size: 0.88rem !important;
-    line-height: 1.55 !important;
-    color: rgba(255, 255, 255, 0.55) !important;
-    text-shadow: none !important;
-    text-align: left;
-    max-width: none !important;
-  }
-
-  /* ── Who List (CTA Scene) ── */
-
-  .who-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
-    margin-top: 2rem;
-  }
-
-  .who-list p {
-    display: inline-block;
-    margin: 0 !important;
-    padding: 0.55rem 1.6rem;
-    font-size: clamp(0.85rem, 1.2vw, 1.05rem) !important;
-    color: rgba(255, 255, 255, 0.9) !important;
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 999px;
-    text-shadow: none !important;
-    width: fit-content;
-    max-width: none !important;
-  }
-
-  /* ── Object & Asset Layers ── */
+  /* ── Object Layer ── */
 
   .object-layer {
-    z-index: 10;
+    z-index: 20;
     inset: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .scene-asset-wrap {
+  .scene-obj-wrapper {
     position: absolute;
-    inset: 0;
+    pointer-events: none;
+  }
+
+  /* Continuous floating oscillation */
+  @keyframes float-obj {
+
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+      transform: translateY(-20px) rotate(1.5deg);
+    }
+  }
+
+  .scene-obj {
     width: 100%;
-    height: 100%;
-  }
-
-  .scene-asset-wrap img {
-    position: absolute;
+    height: auto;
     object-fit: contain;
+    animation: float-obj 6s ease-in-out infinite;
+    pointer-events: none;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── Smoke Effect for Bridge Scene ── */
+
+  .scene-smoke {
+    position: absolute;
+    z-index: 15;
+    /* Behind objects (20), in front of background (10) */
+    inset: 0;
     pointer-events: none;
   }
 
-  .asset-sc1-main {
-    left: 50%;
-    top: 18%;
-    width: min(28vw, 360px);
-    transform: translateX(-50%);
+  .smoke-three-container {
+    width: 100vw;
+    height: 100vh;
+    mix-blend-mode: screen;
   }
 
-  .asset-sc2-top {
-    left: 50%;
-    top: 22%;
-    width: min(34vw, 420px);
-    transform: translateX(-50%);
+  /* Per-scene object positioning */
+  .obj-hero {
+    right: 8%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: min(32vw, 440px);
   }
 
-  .asset-sc2-bottom {
-    left: 50%;
-    bottom: -2%;
-    width: min(104vw, 1500px);
-    transform: translateX(-50%);
+  .obj-problem {
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: min(36vw, 480px);
   }
 
-  .asset-sc3-main {
-    left: 50%;
-    top: 44%;
-    width: min(26vw, 320px);
-    transform: translate(-50%, -50%);
+  .obj-bridge {
+    right: 2%;
+    bottom: -1vh;
+    /* Attached flush or slightly below bottom */
+    width: min(48vw, 550px);
+    /* Keep large to be majestic */
   }
 
-  .asset-sc4-top {
-    left: 50%;
-    top: 24%;
-    width: min(28vw, 360px);
-    transform: translateX(-50%);
+  .obj-pillars {
+    right: 6%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: min(30vw, 400px);
   }
 
-  .asset-sc4-bottom {
-    left: 50%;
-    bottom: -1%;
-    width: min(42vw, 460px);
-    transform: translateX(-50%);
+  .obj-cta {
+    right: 8%;
+    bottom: 0;
+    width: min(34vw, 440px);
   }
 
-  /* ── Scroll Height (5 scenes × 150vh) ── */
+  /* ── Slide Bottom Bar ── */
+
+  .slide-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 6vw;
+    pointer-events: auto;
+  }
+
+  .slide-counter {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .slide-nav {
+    display: flex;
+    gap: 2px;
+  }
+
+  .slide-nav button {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.6);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .slide-nav button:first-child {
+    border-radius: 6px 0 0 6px;
+  }
+
+  .slide-nav button:last-child {
+    border-radius: 0 6px 6px 0;
+  }
+
+  .slide-nav button:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+  }
+
+  /* ── Scroll Height (5 scenes) ── */
 
   .scroll-height {
     position: relative;
-    height: 750vh;
+    height: 800vh;
     width: 100%;
     background: transparent;
     pointer-events: none;
@@ -420,88 +425,52 @@
 
   /* ── Responsive ── */
 
-  @media (max-width: 900px) {
+  @media (max-width: 768px) {
     .text-layer {
-      padding: 0 1.5rem;
+      padding: 0 1.5rem 14vh;
     }
 
     .text-layer h2 {
-      font-size: clamp(2.8rem, 14vw, 5.4rem);
-      line-height: 0.9;
+      font-size: clamp(2.6rem, 14vw, 5rem);
+      max-width: 90vw;
     }
 
-    .text-layer p {
-      max-width: 28rem;
-      font-size: 1rem;
+    .scene-desc {
+      max-width: 100%;
+      font-size: 0.92rem;
     }
 
-    .quotes-stack {
-      flex-direction: column;
-      align-items: center;
+    .scene-obj-wrapper {
+      opacity: 0.4;
     }
 
-    .quotes-stack blockquote {
-      border-radius: 1rem;
+    .obj-hero,
+    .obj-problem,
+    .obj-bridge,
+    .obj-pillars {
+      right: -10%;
+      width: 55vw;
     }
 
-    .pillars-grid {
-      grid-template-columns: 1fr;
-      gap: 1.2rem;
+    .obj-cta {
+      right: -5%;
+      width: 50vw;
     }
 
-    .pillar {
-      padding: 1.4rem 1.2rem;
+    .slider-header {
+      padding: 1.5rem;
     }
 
-    .pillar-num {
-      font-size: 1.8rem;
+    .header-nav {
+      gap: 1.5rem;
     }
 
-    .accent-line {
-      font-size: clamp(1.1rem, 4vw, 1.6rem) !important;
+    .header-nav a:not(.nav-cta) {
+      display: none;
     }
 
-    .asset-sc1-main {
-      width: 48vw;
-      top: 22%;
-    }
-
-    .asset-sc2-bottom,
-    .asset-sc4-bottom {
-      width: 120vw;
-    }
-
-    .asset-sc2-bottom {
-      bottom: 2%;
-    }
-
-    .asset-sc2-top,
-    .asset-sc4-top {
-      width: 56vw;
-      top: 18%;
-    }
-
-    .asset-sc3-main {
-      width: 42vw;
-      top: 42%;
-    }
-
-    .asset-sc4-bottom {
-      width: 62vw;
-    }
-
-    #hero .text-layer,
-    #problem .text-layer,
-    #cta .text-layer {
-      bottom: 7%;
-    }
-
-    #pillars .text-layer {
-      bottom: 4%;
-    }
-
-    .text-layer p {
-      max-width: 24rem;
+    .slide-bar {
+      padding: 1rem 1.5rem;
     }
   }
 }
