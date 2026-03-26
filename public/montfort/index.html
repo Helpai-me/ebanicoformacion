@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Montfort Group – Global Commodity Trading & Asset Investment</title>
+  <meta name="description" content="Montfort is a global commodity trading and asset investment company." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #2D628C;
+      --blue-light: #A9BFD2;
+      --blue-mid: #5d7e98;
+      --blue-dark: #152535;
+    }
+
+    html, body {
+      font-family: 'Josefin Sans', sans-serif;
+      background: #0d1c2b;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 64px;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 44px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-left {
+      display: flex;
+      gap: 36px;
+    }
+
+    .nav-left a {
+      font-size: 9.5px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-weight: 300;
+      transition: color 0.3s;
+      padding-bottom: 3px;
+      border-bottom: 1px solid transparent;
+    }
+
+    .nav-left a:hover, .nav-left a.active {
+      color: rgba(255,255,255,0.95);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-right a, .menu-btn {
+      font-size: 9.5px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-weight: 300;
+      transition: color 0.3s;
+      background: none; border: none; cursor: pointer;
+      font-family: inherit;
+    }
+
+    .nav-right a:hover, .menu-btn:hover { color: #fff; }
+
+    .news-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px;
+      background: var(--blue);
+      color: #fff; font-size: 9px; border-radius: 50%;
+      margin-left: 5px; font-weight: 600;
+    }
+
+    .menu-btn {
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .hamburger {
+      display: flex; flex-direction: column; gap: 5px;
+    }
+
+    .hamburger span {
+      display: block;
+      height: 1px;
+      background: rgba(255,255,255,0.65);
+      transition: width 0.35s ease;
+    }
+
+    .hamburger span:nth-child(1) { width: 20px; }
+    .hamburger span:nth-child(2) { width: 12px; }
+    .menu-btn:hover .hamburger span:nth-child(2) { width: 20px; }
+
+    /* ===== MENU OVERLAY ===== */
+    #menuOverlay {
+      position: fixed; inset: 0; z-index: 900;
+      background: #f0f4f7;
+      clip-path: circle(0% at calc(100% - 85px) 32px);
+      transition: clip-path 0.75s cubic-bezier(0.77, 0, 0.18, 1);
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+
+    #menuOverlay.open {
+      clip-path: circle(150% at calc(100% - 85px) 32px);
+      pointer-events: all;
+    }
+
+    .overlay-inner {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 2px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.45s ease 0.35s, transform 0.45s ease 0.35s;
+    }
+
+    #menuOverlay.open .overlay-inner {
+      opacity: 1; transform: translateY(0);
+    }
+
+    .overlay-inner a {
+      font-size: clamp(22px, 3.2vw, 40px);
+      letter-spacing: 7px;
+      text-transform: uppercase;
+      font-weight: 200;
+      color: var(--blue-dark);
+      text-decoration: none;
+      padding: 9px 20px;
+      transition: color 0.25s, letter-spacing 0.4s;
+    }
+
+    .overlay-inner a:hover {
+      color: var(--blue);
+      letter-spacing: 10px;
+    }
+
+    .overlay-sec {
+      margin-top: 40px;
+      display: flex; gap: 32px;
+    }
+
+    .overlay-sec a {
+      font-size: 9px !important;
+      letter-spacing: 3px !important;
+      color: rgba(45,98,140,0.45) !important;
+    }
+
+    .overlay-sec a:hover {
+      color: var(--blue) !important;
+    }
+
+    .menu-close-btn {
+      position: absolute;
+      top: 18px; right: 44px;
+      background: none; border: none;
+      font-size: 20px;
+      color: var(--blue-mid);
+      cursor: pointer;
+      font-family: inherit;
+      padding: 8px;
+      transition: transform 0.3s, color 0.2s;
+    }
+
+    .menu-close-btn:hover { transform: rotate(90deg); color: var(--blue); }
+
+    /* ===== HERO (parallax container) ===== */
+    #hero {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      /* Height calculated in JS */
+    }
+
+    /* ALL PARALLAX LAYERS share these */
+    .parallax {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
+    }
+
+    /* LAYER 0: sky background */
+    #layer-bg {
+      width: 194%;
+      z-index: 1;
+    }
+
+    /* LAYER 1: far mountains back */
+    #layer-m1 {
+      width: 175%;
+      z-index: 2;
+    }
+
+    /* LAYER 2: fog 1 */
+    #layer-fog1 {
+      width: 190%;
+      z-index: 3;
+    }
+
+    /* LAYER 3: middle mountains */
+    #layer-m2 {
+      width: 165%;
+      z-index: 4;
+    }
+
+    /* LAYER 4: fog 2 */
+    #layer-fog2 {
+      width: 185%;
+      z-index: 5;
+    }
+
+    /* LAYER 5: near mountains left */
+    #layer-m3 {
+      width: 155%;
+      z-index: 6;
+    }
+
+    /* LAYER 6: near mountains right */
+    #layer-m4 {
+      width: 155%;
+      z-index: 7;
+    }
+
+    /* LAYER 7: foreground mountains */
+    #layer-m5 {
+      width: 140%;
+      z-index: 8;
+    }
+
+    /* TEXT LAYER */
+    #layer-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -45%);
+      z-index: 9;
+      text-align: center;
+      pointer-events: auto;
+      transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
+    }
+
+    .hero-eyebrow {
+      font-size: clamp(9px, 1.2vw, 13px);
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      font-weight: 100;
+      color: rgba(200,220,235,0.75);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .hero-wordmark {
+      font-size: clamp(36px, 6.5vw, 96px);
+      letter-spacing: clamp(14px, 2.5vw, 28px);
+      font-weight: 800;
+      color: rgba(255,255,255,0.95);
+      text-transform: uppercase;
+      line-height: 0.9;
+      display: block;
+      text-shadow: 0 2px 40px rgba(0,0,0,0.25);
+    }
+
+    /* Non-parallax layers */
+    .static-layer {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    /* Sun rays top-right */
+    #layer-rays {
+      top: 0; right: 0;
+      width: 45%;
+      z-index: 10;
+      opacity: 0.55;
+    }
+
+    /* Vignette */
+    #vignette {
+      position: absolute;
+      inset: 0;
+      z-index: 11;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center,
+        transparent 0%,
+        transparent 45%,
+        rgba(10, 25, 40, 0.55) 100%
+      );
+    }
+
+    /* Bottom shadow */
+    #layer-shadow {
+      bottom: 0; left: 0; right: 0;
+      height: 30%;
+      z-index: 12;
+      background: linear-gradient(to top, rgba(8,18,30,0.7), transparent);
+    }
+
+    /* Scroll hint */
+    .scroll-hint {
+      position: absolute;
+      bottom: 36px; left: 44px;
+      z-index: 14;
+      display: flex; align-items: center; gap: 14px;
+    }
+
+    .scroll-hint span {
+      font-size: 8.5px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(169,191,210,0.7);
+      font-weight: 300;
+    }
+
+    .scroll-line {
+      width: 52px; height: 1px;
+      background: rgba(169,191,210,0.2);
+      position: relative; overflow: hidden;
+    }
+
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: rgba(169,191,210,0.8);
+      animation: scanline 2.2s ease infinite;
+    }
+
+    @keyframes scanline {
+      0% { left: -100%; }
+      50% { left: 0; }
+      100% { left: 100%; }
+    }
+
+    /* Sound btn */
+    .sound-btn {
+      position: fixed;
+      bottom: 30px; right: 30px;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 400;
+      transition: background 0.25s;
+    }
+
+    .sound-btn:hover { background: rgba(255,255,255,0.22); }
+
+    /* ===== CONTENT SECTIONS BELOW HERO ===== */
+    .site-content {
+      background: #fff;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* INTRO */
+    #intro {
+      padding: 150px 10% 130px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 100px;
+      align-items: center;
+    }
+
+    .intro-headline {
+      font-size: clamp(26px, 3.6vw, 48px);
+      font-weight: 200;
+      color: var(--blue-light);
+      letter-spacing: 3px;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .intro-body {
+      font-size: 13px;
+      line-height: 2;
+      color: #666;
+      font-weight: 300;
+      letter-spacing: 0.3px;
+      margin-bottom: 44px;
+    }
+
+    .cta-link {
+      display: inline-flex; align-items: center; gap: 14px;
+      font-size: 9.5px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--blue-dark);
+      text-decoration: none;
+      font-weight: 400;
+      border-bottom: 1px solid rgba(45,98,140,0.25);
+      padding-bottom: 5px;
+      transition: gap 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    .cta-link:hover { gap: 22px; color: var(--blue); border-color: var(--blue); }
+
+    /* DIV-INTRO */
+    #div-intro {
+      background: #f1f5f8;
+      padding: 120px 10%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 100px;
+      align-items: center;
+    }
+
+    .div-hl {
+      font-size: clamp(22px, 3vw, 42px);
+      font-weight: 200;
+      color: var(--blue-mid);
+      letter-spacing: 2.5px;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .div-body {
+      font-size: 13px;
+      line-height: 2;
+      color: #777;
+      font-weight: 300;
+      letter-spacing: 0.3px;
+    }
+
+    /* DIVISION SLIDES */
+    .div-slide {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .div-slide-bg {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .div-slide-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top,
+        rgba(8,20,32,0.85) 0%,
+        rgba(8,20,32,0.3) 55%,
+        transparent 100%
+      );
+    }
+
+    .div-slide-content {
+      position: relative; z-index: 2;
+      padding: 70px 9%;
+      width: 100%;
+    }
+
+    .div-num {
+      width: 46px; height: 46px;
+      border: 1px solid rgba(255,255,255,0.3);
+      transform: rotate(45deg);
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .div-num span {
+      transform: rotate(-45deg);
+      font-size: 11px; letter-spacing: 1px;
+      color: rgba(255,255,255,0.8);
+      font-weight: 300;
+    }
+
+    .div-label {
+      font-size: 9.5px;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: rgba(169,191,210,0.85);
+      margin-bottom: 20px;
+      font-weight: 300;
+    }
+
+    .div-title {
+      font-size: clamp(22px, 3.5vw, 44px);
+      font-weight: 200;
+      color: #fff;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      line-height: 1.2;
+      margin-bottom: 36px;
+      max-width: 620px;
+    }
+
+    .div-link {
+      display: inline-flex; align-items: center; gap: 14px;
+      font-size: 9.5px;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-weight: 300;
+      border-bottom: 1px solid rgba(255,255,255,0.22);
+      padding-bottom: 4px;
+      transition: gap 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    .div-link:hover { gap: 22px; color: var(--blue-light); border-color: var(--blue-light); }
+
+    /* GLOBE */
+    #globe {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    .globe-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 65% center,
+        #1a3a52 0%, #0d2236 50%, #060f1a 100%);
+    }
+
+    .globe-sphere-wrap {
+      position: absolute;
+      right: -5%; top: 50%;
+      transform: translateY(-50%);
+      width: min(62vw, 680px);
+      height: min(62vw, 680px);
+      border-radius: 50%;
+      overflow: hidden;
+      opacity: 0.5;
+    }
+
+    .globe-sphere {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      background:
+        radial-gradient(ellipse at 38% 35%,
+          rgba(74,127,168,0.6) 0%,
+          rgba(22,55,85,0.8) 50%,
+          rgba(6,18,30,0.95) 100%
+        );
+      box-shadow:
+        inset -25px -25px 70px rgba(0,0,0,0.7),
+        inset 8px 8px 30px rgba(74,127,168,0.12),
+        0 0 90px rgba(45,98,140,0.2);
+      animation: globePulse 8s ease-in-out infinite;
+    }
+
+    @keyframes globePulse {
+      0%, 100% { box-shadow: inset -25px -25px 70px rgba(0,0,0,0.7), 0 0 90px rgba(45,98,140,0.2); }
+      50% { box-shadow: inset -25px -25px 70px rgba(0,0,0,0.5), 0 0 130px rgba(45,98,140,0.35); }
+    }
+
+    .globe-content {
+      position: relative; z-index: 2;
+      padding: 0 9%;
+      max-width: 560px;
+    }
+
+    .globe-hl {
+      font-size: clamp(22px, 3.5vw, 44px);
+      font-weight: 200;
+      color: #fff;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      line-height: 1.2;
+      margin-bottom: 50px;
+    }
+
+    .offices {
+      display: flex; flex-direction: column; gap: 18px;
+    }
+
+    .office-item {
+      display: flex; align-items: center; gap: 14px;
+      font-size: 10px;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: rgba(169,191,210,0.7);
+      font-weight: 300;
+    }
+
+    .office-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      flex-shrink: 0;
+      animation: pulseDot 2.5s ease-in-out infinite;
+    }
+
+    .office-item:nth-child(2) .office-dot { animation-delay: 0.8s; }
+    .office-item:nth-child(3) .office-dot { animation-delay: 1.6s; }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.4); box-shadow: 0 0 0 4px rgba(169,191,210,0.12); }
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--blue-dark);
+      padding: 90px 9% 56px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 70px;
+      padding-bottom: 70px;
+      border-bottom: 1px solid rgba(169,191,210,0.08);
+    }
+
+    .office-label {
+      font-size: 9px;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: var(--blue-light);
+      margin-bottom: 22px;
+      font-weight: 400;
+    }
+
+    .office-address {
+      font-size: 12px;
+      line-height: 2;
+      color: rgba(169,191,210,0.45);
+      font-weight: 300;
+      font-style: normal;
+    }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 44px;
+    }
+
+    .footer-copy {
+      font-size: 9.5px;
+      letter-spacing: 1.5px;
+      color: rgba(169,191,210,0.25);
+      font-weight: 300;
+    }
+
+    .footer-links {
+      display: flex; gap: 30px;
+    }
+
+    .footer-links a {
+      font-size: 9.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(169,191,210,0.35);
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+
+    .footer-links a:hover { color: var(--blue-light); }
+
+    /* ===== SCROLL-REVEAL for content sections ===== */
+    .reveal { opacity: 0; transform: translateY(28px); }
+    .reveal.vis { opacity: 1; transform: none; transition: opacity 0.9s ease, transform 0.9s ease; }
+    .reveal.vis.d1 { transition-delay: 0.1s; }
+    .reveal.vis.d2 { transition-delay: 0.25s; }
+    .reveal.vis.d3 { transition-delay: 0.4s; }
+
+    /* HIDE class for load animation */
+    .hide { opacity: 0; }
+
+    @media (max-width: 900px) {
+      .nav-left { display: none; }
+      #intro, #div-intro { grid-template-columns: 1fr; gap: 40px; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  
+    /* ===== SCROLL-TRACK ===== */
+    body { background: #0d1c2b; overflow-x: hidden; }
+    #scroll-track {
+      height: 600vh; /* 6 full screens of scroll */
+      position: relative;
+    }
+    #sticky-container {
+      position: sticky;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #0d1c2b;
+    }
+
+    #parallax-wrapper {
+      position: absolute;
+      top: 0; left: 0;
+      width: 400vw;
+      height: 100vh;
+      will-change: transform;
+    }
+
+    .horizon-layer {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      will-change: transform;
+    }
+
+    .horizon-layer svg {
+      width: 400vw;
+      height: 100vh;
+      display: block;
+    }
+
+    /* Content Panels */
+    .panel {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%; max-width: 800px;
+      padding: 0 40px;
+      text-align: center;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      z-index: 50;
+      will-change: transform, opacity;
+    }
+    .panel.active { pointer-events: auto; visibility: visible; }
+
+    #panel-hero { opacity: 1; visibility: visible; pointer-events: auto; }
+
+</style>
+</head>
+<body>
+<div id="menuOverlay">
+  <button class="menu-close-btn" id="menuClose">✕</button>
+  <div class="overlay-inner">
+    <a href="#hero">Montfort Group</a>
+    <a href="#trading">Montfort Trading</a>
+    <a href="#capital">Montfort Capital</a>
+    <a href="#maritime">Montfort Maritime</a>
+    <a href="#energy">Fort Energy</a>
+    <div class="overlay-sec">
+      <a href="#contact">Contact</a>
+      <a href="#">ESG</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+    </div>
+  </div>
+</div>
+
+
+<header class="hide" id="header">
+  <nav class="nav-left">
+    <a href="#hero" class="active">Montfort Group</a>
+    <a href="#trading">Montfort Trading</a>
+    <a href="#capital">Montfort Capital</a>
+    <a href="#maritime">Montfort Maritime</a>
+    <a href="#energy">Fort Energy</a>
+  </nav>
+  <div class="nav-right">
+    <a href="#">NEWS <span class="news-badge">16</span></a>
+    <button class="menu-btn" id="menuTrigger">
+      <div class="hamburger">
+        <span></span><span></span>
+      </div>
+      MENU
+    </button>
+  </div>
+</header>
+
+<div id="scroll-track">
+  <div id="sticky-container">
+    
+  <!-- HORIZON PARALLAX BACKGROUNDS -->
+  <div id="parallax-wrapper">
+    <!-- Sky -->
+    <div class="horizon-layer" id="h-layer-bg" data-speed="0.1">
+      <svg viewBox="0 0 5760 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8fb3cc"/><stop offset="35%" stop-color="#b5d0e3"/><stop offset="70%" stop-color="#ccdde9"/><stop offset="100%" stop-color="#d8e9f2"/></linearGradient>
+        </defs>
+        <rect width="5760" height="900" fill="url(#skyGrad)"/>
+      </svg>
+    </div>
+
+    <!-- Far mountains -->
+    <div class="horizon-layer" id="h-layer-m1" data-speed="0.2">
+      <svg viewBox="0 0 5760 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="m1g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8fafc9"/><stop offset="100%" stop-color="#a8c4d8"/></linearGradient>
+          <g id="m1_obj">
+            <path d="M-100,900 L-100,560 L80,440 L200,520 L340,390 L460,480 L580,350 L680,430 L780,310 L880,415 L960,300 L1050,380 L1140,260 L1240,370 L1350,240 L1440,330 L1440,900 Z" fill="url(#m1g)" opacity="0.6"/>
+            <path d="M780,310 L800,330 L820,315 L840,340 L780,310Z" fill="rgba(230,240,248,0.6)"/><path d="M1140,260 L1160,285 L1180,268 L1200,290 L1140,260Z" fill="rgba(230,240,248,0.5)"/><path d="M340,390 L360,410 L380,395 L340,390Z" fill="rgba(230,240,248,0.5)"/>
+          </g>
+        </defs>
+        <use href="#m1_obj" x="0"/><use href="#m1_obj" x="1440"/><use href="#m1_obj" x="2880"/><use href="#m1_obj" x="4320"/>
+      </svg>
+    </div>
+
+    <!-- Mid mountains -->
+    <div class="horizon-layer" id="h-layer-m2" data-speed="0.4">
+      <svg viewBox="0 0 5760 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+           <linearGradient id="m2g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5c839e"/><stop offset="100%" stop-color="#7aa0b8"/></linearGradient>
+           <g id="m2_obj">
+             <path d="M-100,900 L-100,600 L60,520 L180,570 L320,460 L440,540 L580,400 L700,490 L840,360 L960,450 L1080,320 L1180,410 L1300,280 L1420,380 L1540,260 L1440,900 Z" fill="url(#m2g)" opacity="0.82"/>
+             <path d="M580,400 L610,430 L640,408 L660,438 L580,400Z" fill="rgba(220,235,248,0.7)"/><path d="M1080,320 L1105,348 L1130,328 L1155,356 L1080,320Z" fill="rgba(220,235,248,0.7)"/><path d="M840,360 L868,390 L892,372 L840,360Z" fill="rgba(220,235,248,0.6)"/>
+           </g>
+        </defs>
+        <use href="#m2_obj" x="0"/><use href="#m2_obj" x="1440"/><use href="#m2_obj" x="2880"/><use href="#m2_obj" x="4320"/>
+      </svg>
+    </div>
+
+    <!-- Foreground mountains -->
+    <div class="horizon-layer" id="h-layer-m5" data-speed="0.75">
+      <svg viewBox="0 0 5760 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+           <linearGradient id="m5g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#243d52"/><stop offset="100%" stop-color="#2e526a"/></linearGradient>
+           <g id="m5_obj">
+             <path d="M-100,900 L-100,750 L100,640 L280,730 L420,600 L560,720 L1440,900 Z" fill="url(#m5g)" opacity="0.9"/>
+             <path d="M560,720 L700,580 L840,700 L1000,550 L1150,680 L1300,530 L1440,660 L1440,900 L-100,900 Z" fill="url(#m5g)" opacity="0.85"/>
+             <path d="M420,600 L455,640 L490,615 L525,650 L420,600Z" fill="rgba(235,245,255,0.8)"/><path d="M1000,550 L1035,588 L1068,568 L1000,550Z" fill="rgba(235,245,255,0.75)"/>
+           </g>
+        </defs>
+        <use href="#m5_obj" x="0"/><use href="#m5_obj" x="1440"/><use href="#m5_obj" x="2880"/><use href="#m5_obj" x="4320"/>
+      </svg>
+    </div>
+  </div>
+
+    
+    <div class="panel" id="panel-hero">
+      <span class="hero-eyebrow">The Montfort Group</span>
+      <span class="hero-wordmark">MONTFORT</span>
+      <div class="scroll-hint" style="position:relative; margin-top:20px; justify-content:center; bottom:auto; left:auto;">
+        <span>Scroll Down to Discover</span>
+        <div class="scroll-line"></div>
+      </div>
+    </div>
+    <div class="panel" id="panel-intro">
+      <h2 class="intro-headline" style="color:var(--blue-light);">Montfort is a global commodity trading and asset investment company.</h2>
+      <p class="intro-body" style="color:#ffffff; font-weight: 300; margin-top:20px;">We trade, refine, store, and transport energy and commodities. We also invest in related assets to create long-term value.</p>
+    </div>
+    <div class="panel" id="panel-trading">
+      <div class="div-num" style="margin:0 auto 28px;"><span>1</span></div>
+      <p class="div-label">Montfort Trading</p>
+      <h2 class="div-title" style="margin:0 auto;">Operating Efficiently by Leading with Innovation.</h2>
+    </div>
+    <div class="panel" id="panel-capital">
+      <div class="div-num" style="margin:0 auto 28px;"><span>2</span></div>
+      <p class="div-label">Montfort Capital</p>
+      <h2 class="div-title" style="margin:0 auto;">Investing in Opportunities Across the Energy Spectrum.</h2>
+    </div>
+    <div class="panel" id="panel-maritime">
+      <div class="div-num" style="margin:0 auto 28px;"><span>3</span></div>
+      <p class="div-label">Montfort Maritime</p>
+      <h2 class="div-title" style="margin:0 auto;">Connecting Markets Through Efficient Logistics Solutions.</h2>
+    </div>
+    <div class="panel" id="panel-energy">
+      <div class="div-num" style="margin:0 auto 28px;"><span>4</span></div>
+      <p class="div-label">Fort Energy</p>
+      <h2 class="div-title" style="margin:0 auto;">Powering the Future Through Sustainable Energy Solutions.</h2>
+    </div>
+
+    
+    <div class="panel footer-fade" id="panel-footer" style="top:auto; bottom:0; left:0; transform:none; max-width:100%; padding:0;">
+      <footer id="contact">
+    <div class="footer-grid">
+      <div class="reveal">
+        <p class="office-label">Geneva</p>
+        <address class="office-address">
+          Montfort Group SA<br>Rue du Rhône 14<br>CH-1204 Geneva<br>Switzerland<br><br>
+          +41 22 000 0000<br>info@mont-fort.com
+        </address>
+      </div>
+      <div class="reveal d1">
+        <p class="office-label">Dubai</p>
+        <address class="office-address">
+          Montfort DMCC<br>JLT Cluster J, Level 14<br>Jumeirah Lakes Towers<br>Dubai, UAE<br><br>
+          +971 4 000 0000<br>dubai@mont-fort.com
+        </address>
+      </div>
+      <div class="reveal d2">
+        <p class="office-label">Singapore</p>
+        <address class="office-address">
+          Montfort Asia Pte. Ltd.<br>1 Raffles Place, #20-61<br>One Raffles Place<br>Singapore 048616<br><br>
+          +65 6000 0000<br>singapore@mont-fort.com
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom reveal">
+      <p class="footer-copy">© 2024 | Montfort – All rights reserved</p>
+      <nav class="footer-links">
+        <a href="#contact">Contact</a>
+        <a href="#">ESG</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+      </nav>
+    </div>
+  </footer>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Setup GSAP master timeline linked to scroll
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: "#scroll-track",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 0.5,
+    }
+  });
+
+  // 1. Move Background Layers
+  const layers = document.querySelectorAll('.horizon-layer');
+  layers.forEach(layer => {
+    const speed = parseFloat(layer.dataset.speed || 0.5);
+    // Move to the left by -300vw based on speed
+    tl.to(layer, { x: `-${300 * speed}vw`, ease: "none" }, 0);
+  });
+
+  // 2. Sequence Panels (Start at 0, end at 1 duration relative sequence)
+  // Panel Hero (0% - 10%)
+  tl.to("#panel-hero", { opacity: 0, y: -50, duration: 0.1 }, 0);
+  
+  // Panel Intro (15% - 25%)
+  tl.fromTo("#panel-intro", { opacity: 0, y: 50, visibility: 'hidden' }, { opacity: 1, y: 0, visibility: 'visible', duration: 0.05 }, 0.15);
+  tl.to("#panel-intro", { opacity: 0, y: -50, duration: 0.05 }, 0.25);
+
+  // Panel Trading (30% - 40%)
+  tl.fromTo("#panel-trading", { opacity: 0, scale: 0.9, visibility: 'hidden' }, { opacity: 1, scale: 1, visibility: 'visible', duration: 0.05 }, 0.3);
+  tl.to("#panel-trading", { opacity: 0, scale: 1.1, duration: 0.05 }, 0.4);
+
+  // Panel Capital (45% - 55%)
+  tl.fromTo("#panel-capital", { opacity: 0, scale: 0.9, visibility: 'hidden' }, { opacity: 1, scale: 1, visibility: 'visible', duration: 0.05 }, 0.45);
+  tl.to("#panel-capital", { opacity: 0, scale: 1.1, duration: 0.05 }, 0.55);
+
+  // Panel Maritime (60% - 70%)
+  tl.fromTo("#panel-maritime", { opacity: 0, scale: 0.9, visibility: 'hidden' }, { opacity: 1, scale: 1, visibility: 'visible', duration: 0.05 }, 0.6);
+  tl.to("#panel-maritime", { opacity: 0, scale: 1.1, duration: 0.05 }, 0.7);
+
+  // Panel Energy (75% - 85%)
+  tl.fromTo("#panel-energy", { opacity: 0, scale: 0.9, visibility: 'hidden' }, { opacity: 1, scale: 1, visibility: 'visible', duration: 0.05 }, 0.75);
+  tl.to("#panel-energy", { opacity: 0, scale: 1.1, duration: 0.05 }, 0.85);
+
+  // Footer reveal wrapper (90% - 100%)
+  const footerWrap = document.querySelector('.footer-fade');
+  if(footerWrap) {
+    tl.fromTo(footerWrap, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.1 }, 0.9);
+  }
+
+  // Active Nav
+  window.addEventListener('scroll', () => {
+     // Optional: Map scroll progress to nav links
+  });
+
+  // Overlay Menu Logic
+  const overlay = document.getElementById('menuOverlay');
+  const menuTrigger = document.getElementById('menuTrigger');
+  const menuClose = document.getElementById('menuClose');
+  if(menuTrigger) menuTrigger.addEventListener('click', () => { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; });
+  if(menuClose) {
+      const closeMenu = () => { overlay.classList.remove('open'); document.body.style.overflow = ''; };
+      menuClose.addEventListener('click', closeMenu);
+      overlay.addEventListener('click', e => { if(e.target === overlay) closeMenu(); });
+      document.querySelectorAll('#menuOverlay a').forEach(a => a.addEventListener('click', closeMenu));
+  }
+</script>
+
+</body>
+</html>

@@ -7,10 +7,10 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
 
-  --color-background: #FDFCF8;
-  --color-foreground: #141414;
+  --color-background: #000000;
+  --color-foreground: #ffffff;
 
-  --color-primary: #1A2421; /* Very dark clinical green/black */
+  --color-primary: #1A2421;
   --color-primary-foreground: #FDFCF8;
 
   --color-secondary: #E8E5D9;
@@ -45,8 +45,8 @@
 
 @layer base {
   :root {
-    --background: #FDFCF8;
-    --foreground: #141414;
+    --background: #000000;
+    --foreground: #ffffff;
     --primary: #1A2421;
     --primary-foreground: #FDFCF8;
     --secondary: #E8E5D9;
@@ -60,32 +60,449 @@
     --ring: #1A2421;
     --radius: 0.5rem;
   }
-  .dark {
-    --background: #0A0A0A;
-    --foreground: #FDFCF8;
-    --primary: #FDFCF8;
-    --primary-foreground: #0A0A0A;
-    --secondary: #1A2421;
-    --secondary-foreground: #FDFCF8;
-    --muted: #1A1A1A;
-    --muted-foreground: #A1A1AA;
-    --accent: #C8A97E;
-    --accent-foreground: #FFFFFF;
-    --border: #27272A;
-    --input: #27272A;
-    --ring: #FDFCF8;
+
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-height: 100%;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #fff;
+    font-family: var(--font-sans);
+    width: 100%;
+  }
+
+  body {
+    overflow-x: hidden;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+/* ═══════════════════════════════════════════════
+   CINEMATIC PARALLAX SLIDER
+   ═══════════════════════════════════════════════ */
+
+@layer components {
+
+  /* ── Core Layout ── */
+
+  .slider-app {
+    background: #000;
+    color: #fff;
   }
-  body {
-    @apply bg-background text-foreground font-sans antialiased;
+
+  #viewport {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 10;
   }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    background: #000;
+  }
+
+  #hero {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .layer {
+    position: absolute;
+    will-change: transform, filter, opacity;
+  }
+
+  .full-bg {
+    inset: -10%;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+  }
+
+  /* ── Text Layer Base ── */
+
+  .text-layer {
+    z-index: 50;
+    width: 100%;
+    padding: 0 6vw;
+    text-align: center;
+    color: #fff;
+    pointer-events: none;
+    text-shadow: 0 6px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Per-scene text positioning */
+  #hero .text-layer {
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #problem .text-layer,
+  #cta .text-layer {
+    top: auto;
+    bottom: 10%;
+  }
+
+  #bridge .text-layer {
+    top: 12%;
+  }
+
+  #pillars .text-layer {
+    top: auto;
+    bottom: 6%;
+  }
+
+  /* ── Typography ── */
+
+  .text-layer .scene-kicker {
+    margin-bottom: 1.2rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.6em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .text-layer h2 {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(3rem, 12vw, 10rem);
+    line-height: 0.84;
+    letter-spacing: -0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .text-layer h2 span {
+    font-style: italic;
+    font-weight: 300;
+    text-transform: none;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .text-layer p {
+    max-width: 46rem;
+    margin: 1.5rem auto 0;
+    font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  /* ── Quote Bubbles (Problem Scene) ── */
+
+  .quotes-stack {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    max-width: 56rem;
+    margin-left: auto;
+    margin-right: auto;
+    pointer-events: auto;
+  }
+
+  .quotes-stack blockquote {
+    display: inline-block;
+    margin: 0;
+    padding: 0.7rem 1.4rem;
+    font-family: var(--font-sans);
+    font-size: clamp(0.82rem, 1.2vw, 1rem);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    text-shadow: none;
+  }
+
+  /* ── Accent Line (Solution Scene) ── */
+
+  .accent-line {
+    font-family: var(--font-serif) !important;
+    font-size: clamp(1.3rem, 2.5vw, 2.2rem) !important;
+    font-style: italic;
+    font-weight: 300;
+    color: #ffddb6 !important;
+    margin-top: 2.4rem !important;
+  }
+
+  /* ── Pillars Grid (Objectives Scene) ── */
+
+  .pillars-text {
+    text-align: left !important;
+    display: flex;
+    flex-direction: column;
+    padding: 0 6vw !important;
+  }
+
+  .pillars-text .scene-kicker {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 72rem;
+    margin: 0 auto;
+  }
+
+  .pillar {
+    padding: 2rem 1.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+  }
+
+  .pillar-num {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 2.4rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.2);
+    margin-bottom: 0.6rem;
+    line-height: 1;
+  }
+
+  .pillar h3 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
+    font-weight: 500;
+    color: #fff;
+    margin: 0 0 0.8rem;
+    line-height: 1.15;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .pillar p {
+    margin: 0 !important;
+    font-size: 0.88rem !important;
+    line-height: 1.55 !important;
+    color: rgba(255, 255, 255, 0.55) !important;
+    text-shadow: none !important;
+    text-align: left;
+    max-width: none !important;
+  }
+
+  /* ── Who List (CTA Scene) ── */
+
+  .who-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 2rem;
+  }
+
+  .who-list p {
+    display: inline-block;
+    margin: 0 !important;
+    padding: 0.55rem 1.6rem;
+    font-size: clamp(0.85rem, 1.2vw, 1.05rem) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    text-shadow: none !important;
+    width: fit-content;
+    max-width: none !important;
+  }
+
+  /* ── Object & Asset Layers ── */
+
+  .object-layer {
+    z-index: 10;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .scene-asset-wrap {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .scene-asset-wrap img {
+    position: absolute;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  .asset-sc1-main {
+    left: 50%;
+    top: 18%;
+    width: min(28vw, 360px);
+    transform: translateX(-50%);
+  }
+
+  .asset-sc2-top {
+    left: 50%;
+    top: 22%;
+    width: min(34vw, 420px);
+    transform: translateX(-50%);
+  }
+
+  .asset-sc2-bottom {
+    left: 50%;
+    bottom: -2%;
+    width: min(104vw, 1500px);
+    transform: translateX(-50%);
+  }
+
+  .asset-sc3-main {
+    left: 50%;
+    top: 44%;
+    width: min(26vw, 320px);
+    transform: translate(-50%, -50%);
+  }
+
+  .asset-sc4-top {
+    left: 50%;
+    top: 24%;
+    width: min(28vw, 360px);
+    transform: translateX(-50%);
+  }
+
+  .asset-sc4-bottom {
+    left: 50%;
+    bottom: -1%;
+    width: min(42vw, 460px);
+    transform: translateX(-50%);
+  }
+
+  /* ── Scroll Height (5 scenes × 150vh) ── */
+
+  .scroll-height {
+    position: relative;
+    height: 750vh;
+    width: 100%;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  /* ── Responsive ── */
+
+  @media (max-width: 900px) {
+    .text-layer {
+      padding: 0 1.5rem;
+    }
+
+    .text-layer h2 {
+      font-size: clamp(2.8rem, 14vw, 5.4rem);
+      line-height: 0.9;
+    }
+
+    .text-layer p {
+      max-width: 28rem;
+      font-size: 1rem;
+    }
+
+    .quotes-stack {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .quotes-stack blockquote {
+      border-radius: 1rem;
+    }
+
+    .pillars-grid {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+
+    .pillar {
+      padding: 1.4rem 1.2rem;
+    }
+
+    .pillar-num {
+      font-size: 1.8rem;
+    }
+
+    .accent-line {
+      font-size: clamp(1.1rem, 4vw, 1.6rem) !important;
+    }
+
+    .asset-sc1-main {
+      width: 48vw;
+      top: 22%;
+    }
+
+    .asset-sc2-bottom,
+    .asset-sc4-bottom {
+      width: 120vw;
+    }
+
+    .asset-sc2-bottom {
+      bottom: 2%;
+    }
+
+    .asset-sc2-top,
+    .asset-sc4-top {
+      width: 56vw;
+      top: 18%;
+    }
+
+    .asset-sc3-main {
+      width: 42vw;
+      top: 42%;
+    }
+
+    .asset-sc4-bottom {
+      width: 62vw;
+    }
+
+    #hero .text-layer,
+    #problem .text-layer,
+    #cta .text-layer {
+      bottom: 7%;
+    }
+
+    #pillars .text-layer {
+      bottom: 4%;
+    }
+
+    .text-layer p {
+      max-width: 24rem;
+    }
   }
 }
 
