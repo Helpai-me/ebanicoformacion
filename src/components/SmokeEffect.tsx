@@ -7,32 +7,39 @@ export default function SmokeEffect() {
 
   useEffect(() => {
     if (!mountRef.current) return;
-    
+
     // Scene setup
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const getViewportMetrics = () => ({
+      width: mountRef.current?.clientWidth || 1,
+      height: mountRef.current?.clientHeight || 1,
+    });
+
     // Container dimensions
-    const width = mountRef.current.clientWidth;
-    const height = mountRef.current.clientHeight;
+    const { width, height } = getViewportMetrics();
     renderer.setSize(width, height);
     mountRef.current.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, width / height, 1, 10000);
-    // Move camera further back to see the wide smoke
-    camera.position.z = 1200;
+    camera.position.z = 1050;
 
     // Lighting
-    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-    const light = new THREE.DirectionalLight(0xffffff, 0.8);
-    light.position.set(-1, 0, 1);
-    scene.add(light);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.95));
+    const lightLeft = new THREE.DirectionalLight(0xffffff, 0.95);
+    lightLeft.position.set(-1, 0.2, 1);
+    scene.add(lightLeft);
+    const lightRight = new THREE.DirectionalLight(0xf7f7ff, 0.45);
+    lightRight.position.set(1, -0.1, 1);
+    scene.add(lightRight);
 
     const smokeParticles: THREE.Mesh[] = [];
-    const baseColor = new THREE.Color(0xffffff); // Pure white for bright smoke
+    const baseColor = new THREE.Color('#f7f8ff');
 
     const loader = new THREE.TextureLoader();
-    const smokeGeo = new THREE.PlaneGeometry(600, 600);
+    const smokeGeo = new THREE.PlaneGeometry(720, 720);
 
     loader.load('/img/Smoke-Element.png', (texture) => {
       const smokeMaterial = new THREE.MeshLambertMaterial({
@@ -44,10 +51,10 @@ export default function SmokeEffect() {
         blending: THREE.NormalBlending
       });
 
-      for (let p = 0; p < 50; p++) {
+      for (let p = 0; p < 56; p++) {
         const particle = new THREE.Mesh(smokeGeo, smokeMaterial.clone());
         particle.userData = { lifeProgress: { val: 0 } };
-        
+
         resetParticle(particle, true);
         scene.add(particle);
         smokeParticles.push(particle);
@@ -56,22 +63,30 @@ export default function SmokeEffect() {
     });
 
     const resetParticle = (p: THREE.Mesh, isInitial: boolean) => {
+      const { width: currentWidth, height: currentHeight } = getViewportMetrics();
+      const horizontalRange = currentWidth * 0.95;
+      const spawnY = isInitial
+        ? -currentHeight * (0.18 + Math.random() * 0.2)
+        : -currentHeight * (0.42 + Math.random() * 0.14);
+
       p.position.set(
-        Math.random() * 1800 - 900,
-        isInitial ? (Math.random() * 1000 - 500) : -600, 
+        Math.random() * horizontalRange - horizontalRange / 2,
+        spawnY,
         Math.random() * 400
       );
       p.rotation.z = Math.random() * Math.PI * 2;
-      p.scale.set(0.7, 0.7, 1);
+      const scale = 0.75 + Math.random() * 0.45;
+      p.scale.set(scale, scale, 1);
       p.userData.lifeProgress.val = 0;
       (p.material as THREE.Material).opacity = 0;
     };
 
     const animateParticle = (p: THREE.Mesh) => {
-      const duration = 25 + Math.random() * 15;
+      const { height: currentHeight } = getViewportMetrics();
+      const duration = 22 + Math.random() * 10;
       gsap.to(p.position, {
-        y: 800, 
-        x: p.position.x + (Math.random() * 200 - 100),
+        y: currentHeight * (0.34 + Math.random() * 0.12),
+        x: p.position.x + (Math.random() * 160 - 80),
         duration: duration,
         ease: 'none',
         onComplete: () => {
@@ -82,12 +97,11 @@ export default function SmokeEffect() {
 
       const tl = gsap.timeline({
         onUpdate: () => {
-          // Adjust opacity multiplier (intensity)
-          (p.material as THREE.Material).opacity = p.userData.lifeProgress.val * 0.9;
+          (p.material as THREE.Material).opacity = p.userData.lifeProgress.val * 1.15;
         }
       });
-      tl.to(p.userData.lifeProgress, { val: 1, duration: duration * 0.4, ease: 'sine.inOut' })
-        .to(p.userData.lifeProgress, { val: 0, duration: duration * 0.6, ease: 'sine.in' });
+      tl.to(p.userData.lifeProgress, { val: 1, duration: duration * 0.45, ease: 'sine.inOut' })
+        .to(p.userData.lifeProgress, { val: 0, duration: duration * 0.55, ease: 'sine.in' });
     };
 
     let animationFrameId: number;
@@ -103,13 +117,16 @@ export default function SmokeEffect() {
 
     const handleResize = () => {
       if (!mountRef.current) return;
-      const newWidth = mountRef.current.clientWidth;
-      const newHeight = mountRef.current.clientHeight;
+      const { width: newWidth, height: newHeight } = getViewportMetrics();
+      if (newWidth <= 1 || newHeight <= 1) return; // Don't resize if hidden
       camera.aspect = newWidth / newHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(newWidth, newHeight);
     };
     window.addEventListener('resize', handleResize);
+
+    // Initial check set to delay slightly to catch post-render layout
+    setTimeout(handleResize, 100);
 
     return () => {
       window.removeEventListener('resize', handleResize);
