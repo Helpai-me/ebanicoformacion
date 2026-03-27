@@ -147,9 +147,15 @@
 
   .initial-skeleton-copy {
     display: grid;
-    gap: 1rem;
+    gap: 0.7rem;
     align-content: end;
     padding-bottom: 14vh;
+  }
+
+  .initial-skeleton-clouds {
+    position: relative;
+    height: 7rem;
+    margin-bottom: 1rem;
   }
 
   .initial-skeleton-media {
@@ -158,7 +164,9 @@
   }
 
   .skeleton-block,
-  .skeleton-photo {
+  .skeleton-cloud,
+  .skeleton-hero-cloud,
+  .skeleton-hero-needle {
     position: relative;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.1);
@@ -166,7 +174,9 @@
   }
 
   .skeleton-block::after,
-  .skeleton-photo::after {
+  .skeleton-cloud::after,
+  .skeleton-hero-cloud::after,
+  .skeleton-hero-needle::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -198,53 +208,82 @@
   }
 
   .skeleton-kicker {
-    width: 11rem;
-    height: 0.9rem;
+    width: 13rem;
+    height: 0.75rem;
     border-radius: 999px;
+    opacity: 0.72;
   }
 
   .skeleton-title-lg {
-    width: min(34rem, 74%);
-    height: clamp(3.6rem, 7vw, 5.4rem);
-    border-radius: 1rem;
+    width: min(30rem, 66%);
+    height: clamp(4.6rem, 8vw, 6.6rem);
+    border-radius: 1.2rem;
   }
 
   .skeleton-title-md {
-    width: min(28rem, 62%);
-    height: clamp(2.8rem, 5vw, 4rem);
-    border-radius: 1rem;
+    width: min(18rem, 40%);
+    height: clamp(3rem, 5.2vw, 4.2rem);
+    border-radius: 1.4rem;
+    opacity: 0.92;
   }
 
-  .skeleton-text {
-    width: min(30rem, 68%);
+  .skeleton-highlight {
+    width: min(29rem, 64%);
+    height: 1.8rem;
+    margin-top: 0.65rem;
+    margin-left: 1.2rem;
+    border-radius: 0.3rem;
+  }
+
+  .skeleton-highlight::before {
+    content: "";
+    position: absolute;
+    left: -1rem;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .skeleton-cloud {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(0.5px);
+  }
+
+  .skeleton-cloud-left {
+    width: 6.5rem;
+    height: 2.4rem;
+    left: 1.5rem;
+    top: 2.8rem;
+  }
+
+  .skeleton-cloud-right {
+    width: 8rem;
+    height: 2.9rem;
+    left: 8.2rem;
+    top: 0.8rem;
+  }
+
+  .skeleton-hero-cloud {
+    position: absolute;
+    right: 2rem;
+    top: 10%;
+    width: clamp(16rem, 28vw, 25rem);
+    aspect-ratio: 0.9;
+    border-radius: 44% 56% 50% 50% / 44% 48% 52% 56%;
+    box-shadow: 0 18px 44px rgba(18, 12, 26, 0.12);
+  }
+
+  .skeleton-hero-needle {
+    position: absolute;
+    right: 8.5rem;
+    top: 36%;
+    width: 10rem;
     height: 1.1rem;
     border-radius: 999px;
-  }
-
-  .skeleton-text-short {
-    width: min(22rem, 50%);
-  }
-
-  .skeleton-photo {
-    position: absolute;
-    border-radius: 1.5rem;
-    box-shadow: 0 18px 44px rgba(18, 12, 26, 0.16);
-  }
-
-  .skeleton-photo-back {
-    width: clamp(9rem, 14vw, 14rem);
-    height: clamp(12rem, 18vw, 18rem);
-    left: 10%;
-    top: 4%;
-    transform: rotate(-9deg);
-  }
-
-  .skeleton-photo-front {
-    width: clamp(15rem, 24vw, 22rem);
-    height: clamp(20rem, 32vw, 28rem);
-    right: 0;
-    bottom: 0;
-    transform: rotate(5deg);
+    transform: rotate(-52deg);
   }
 
   @keyframes skeletonSweep {
@@ -1154,7 +1193,7 @@
     right: 2%;
     top: 15%;
     transform: translateY(-50%);
-    width: min(58vw, 820px);
+    width: min(48vw, 720px);
   }
 
   .obj-bridge {

@@ -662,15 +662,18 @@ export default function App() {
           </div>
           <div className="initial-skeleton-body">
             <div className="initial-skeleton-copy">
+              <div className="initial-skeleton-clouds">
+                <div className="skeleton-cloud skeleton-cloud-left" />
+                <div className="skeleton-cloud skeleton-cloud-right" />
+              </div>
               <div className="skeleton-block skeleton-kicker" />
               <div className="skeleton-block skeleton-title-lg" />
               <div className="skeleton-block skeleton-title-md" />
-              <div className="skeleton-block skeleton-text" />
-              <div className="skeleton-block skeleton-text skeleton-text-short" />
+              <div className="skeleton-block skeleton-highlight" />
             </div>
             <div className="initial-skeleton-media">
-              <div className="skeleton-photo skeleton-photo-back" />
-              <div className="skeleton-photo skeleton-photo-front" />
+              <div className="skeleton-hero-cloud" />
+              <div className="skeleton-hero-needle" />
             </div>
           </div>
         </div>
