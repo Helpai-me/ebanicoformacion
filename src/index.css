@@ -908,12 +908,12 @@
   }
 
   .obj-cta-secondary {
-    left: 48%;
+    left: calc(50% + 1rem);
     top: 18%;
-    width: min(20vw, 250px);
+    width: clamp(10rem, 13vw, 13rem);
     opacity: 0.96;
     z-index: 24;
-    transform: rotate(-7deg);
+    transform: rotate(-8deg);
   }
 
   .obj-cta-secondary img {
@@ -930,13 +930,12 @@
   }
 
   .obj-cta-third {
-    left: 34%;
-    top: 22%;
-    width: min(18vw, 220px);
+    left: calc(50% - 8rem);
+    top: 10%;
+    width: clamp(9.5rem, 12vw, 12rem);
     opacity: 0.94;
     z-index: 23;
-    transform: translateX(-10vw) rotate(-11deg);
-    animation: cta-third-enter 1.1s ease-out forwards;
+    transform: rotate(-12deg);
   }
 
   .obj-cta-third img {
@@ -952,21 +951,9 @@
     background: #fff;
   }
 
-  @keyframes cta-third-enter {
-    from {
-      opacity: 0;
-      transform: translateX(-14vw) rotate(-11deg);
-    }
-
-    to {
-      opacity: 0.94;
-      transform: translateX(0) rotate(-11deg);
-    }
-  }
-
   .obj-pillars-secondary {
-    left: 6%;
-    top: 12%;
+    left: 30%;
+    top: 8%;
     width: min(42vw, 620px);
     opacity: 0.96;
     z-index: 24;
@@ -1110,10 +1097,10 @@
   }
 
   .obj-cta {
-    right: 10%;
-    bottom: 8vh;
-    width: min(28vw, 360px);
-    transform: rotate(4deg);
+    left: calc(50% + 11.5rem);
+    top: 46%;
+    width: clamp(16.5rem, 24vw, 24rem);
+    transform: rotate(5deg);
   }
 
   .obj-cta .scene-obj {
@@ -1201,6 +1188,20 @@
 
     .scene-obj-wrapper {
       width: 45vw;
+    }
+  }
+
+  @media (min-width: 1600px) {
+    .obj-cta {
+      left: calc(50% + 10.5rem);
+    }
+
+    .obj-cta-secondary {
+      left: calc(50% + 0.5rem);
+    }
+
+    .obj-cta-third {
+      left: calc(50% - 8.5rem);
     }
   }
 

@@ -221,7 +221,7 @@ const SCENES: SceneConfig[] = [
   },
   {
     id: 'cta',
-    bg: '/img/bg-hero.png',
+    bg: '/img/bg-teory.png',
     kicker: 'ES PARA TI SI QUIERES:',
     titleTop: 'Poner la teoría',
     titleBottom: 'en práctica',
@@ -419,6 +419,7 @@ export default function App() {
       const text = scene.querySelector('.text-layer') as HTMLElement;
       const objWrapper = scene.querySelector('.scene-obj-wrapper') as HTMLElement;
       const secondaryObjWrapper = scene.querySelector('.secondary-obj-wrapper') as HTMLElement;
+      const tertiaryObjWrapper = scene.querySelector('.tertiary-obj-wrapper') as HTMLElement;
       const t = i; // scene start time
 
       // ── Fade in (skip first) ──
@@ -452,15 +453,18 @@ export default function App() {
 
       // ── Text: enter from bottom with stagger ──
       if (text) {
-        const fromY = i === 0 ? 0 : 40;
+        const isUtilityScene = SCENES[i].id === 'faq' || SCENES[i].id === 'footer';
+        const fromY = i === 0 || isUtilityScene ? 0 : 18;
+        const fromX = i === 0 || isUtilityScene ? 0 : -16;
+        const exitX = isUtilityScene ? 0 : 8;
         tl.fromTo(
           text,
-          { yPercent: fromY, autoAlpha: i === 0 ? 1 : 0 },
-          { yPercent: 0, autoAlpha: 1, duration: 0.5, ease: 'power2.out' },
+          { xPercent: fromX, yPercent: fromY, autoAlpha: i === 0 ? 1 : 0 },
+          { xPercent: 0, yPercent: 0, autoAlpha: 1, duration: 0.5, ease: 'power2.out' },
           t + 0.1,
         ).to(
           text,
-          { yPercent: -30, autoAlpha: 0, duration: 0.5, ease: 'power2.in' },
+          { xPercent: exitX, yPercent: -18, autoAlpha: 0, duration: 0.5, ease: 'power2.in' },
           t + 1,
         );
       }
@@ -541,6 +545,38 @@ export default function App() {
             ease: 'none',
           },
           t + 0.9,
+        );
+      }
+
+      if (tertiaryObjWrapper) {
+        tl.fromTo(
+          tertiaryObjWrapper,
+          {
+            xPercent: -90,
+            yPercent: -18,
+            filter: 'blur(12px)',
+            autoAlpha: 0,
+          },
+          {
+            xPercent: 0,
+            yPercent: 0,
+            filter: 'blur(0px)',
+            autoAlpha: 1,
+            duration: 0.62,
+            ease: 'power2.out',
+          },
+          t + 0.24,
+        ).to(
+          tertiaryObjWrapper,
+          {
+            xPercent: 18,
+            yPercent: 4,
+            filter: 'blur(18px)',
+            autoAlpha: 0,
+            duration: 0.58,
+            ease: 'none',
+          },
+          t + 0.94,
         );
       }
 
@@ -688,7 +724,7 @@ export default function App() {
             )}
             {sc.id === 'cta' && (
               <div className="layer secondary-object-layer">
-                <div className="secondary-obj-wrapper obj-cta-third">
+                <div className="tertiary-obj-wrapper obj-cta-third">
                   <img src="/img/enseñar3.webp" alt="" />
                 </div>
               </div>
