@@ -454,19 +454,31 @@ export default function App() {
       // ── Text: enter from bottom with stagger ──
       if (text) {
         const isUtilityScene = SCENES[i].id === 'faq' || SCENES[i].id === 'footer';
-        const fromY = i === 0 || isUtilityScene ? 0 : 18;
-        const fromX = i === 0 || isUtilityScene ? 0 : -16;
+        const fromY = isUtilityScene ? 0 : 18;
+        const fromX = isUtilityScene ? 0 : -16;
         const exitX = isUtilityScene ? 0 : 8;
-        tl.fromTo(
-          text,
-          { xPercent: fromX, yPercent: fromY, autoAlpha: i === 0 ? 1 : 0 },
-          { xPercent: 0, yPercent: 0, autoAlpha: 1, duration: 0.5, ease: 'power2.out' },
-          t + 0.1,
-        ).to(
-          text,
-          { xPercent: exitX, yPercent: -18, autoAlpha: 0, duration: 0.5, ease: 'power2.in' },
-          t + 1,
-        );
+        if (i === 0) {
+          tl.set(
+            text,
+            { xPercent: 0, yPercent: 0, autoAlpha: 1 },
+            t,
+          ).to(
+            text,
+            { xPercent: exitX, yPercent: -18, autoAlpha: 0, duration: 0.5, ease: 'power2.in' },
+            t + 1,
+          );
+        } else {
+          tl.fromTo(
+            text,
+            { xPercent: fromX, yPercent: fromY, autoAlpha: 0 },
+            { xPercent: 0, yPercent: 0, autoAlpha: 1, duration: 0.5, ease: 'power2.out' },
+            t + 0.1,
+          ).to(
+            text,
+            { xPercent: exitX, yPercent: -18, autoAlpha: 0, duration: 0.5, ease: 'power2.in' },
+            t + 1,
+          );
+        }
       }
 
       // ── Object: enter with delay, parallax float ──
@@ -517,35 +529,54 @@ export default function App() {
 
       // ── Secondary Object: enter from left (parallax) ──
       if (secondaryObjWrapper) {
-        tl.fromTo(
-          secondaryObjWrapper,
-          {
-            xPercent: SCENES[i].secondaryObjFromX || -50,
-            yPercent: SCENES[i].secondaryObjFromY || 0,
-            filter: 'blur(14px)',
-            autoAlpha: 0,
-          },
-          {
-            xPercent: 0,
-            yPercent: 0,
-            filter: 'blur(0px)',
-            autoAlpha: 1,
-            duration: 0.6,
-            ease: 'power2.out',
-          },
-          t + 0.2,
-        ).to(
-          secondaryObjWrapper,
-          {
-            xPercent: (SCENES[i].secondaryObjFromX || -50) * -0.2, // Subtle exit offset
-            yPercent: (SCENES[i].secondaryObjFromY || 0) * -0.2,
-            filter: 'blur(20px)',
-            autoAlpha: 0,
-            duration: 0.6,
-            ease: 'none',
-          },
-          t + 0.9,
-        );
+        if (i === 0) {
+          tl.set(
+            secondaryObjWrapper,
+            { xPercent: 0, yPercent: 0, filter: 'blur(0px)', autoAlpha: 1 },
+            t,
+          ).to(
+            secondaryObjWrapper,
+            {
+              xPercent: (SCENES[i].secondaryObjFromX || -50) * -0.2,
+              yPercent: (SCENES[i].secondaryObjFromY || 0) * -0.2,
+              filter: 'blur(20px)',
+              autoAlpha: 0,
+              duration: 0.6,
+              ease: 'none',
+            },
+            t + 0.9,
+          );
+        } else {
+          tl.fromTo(
+            secondaryObjWrapper,
+            {
+              xPercent: SCENES[i].secondaryObjFromX || -50,
+              yPercent: SCENES[i].secondaryObjFromY || 0,
+              filter: 'blur(14px)',
+              autoAlpha: 0,
+            },
+            {
+              xPercent: 0,
+              yPercent: 0,
+              filter: 'blur(0px)',
+              autoAlpha: 1,
+              duration: 0.6,
+              ease: 'power2.out',
+            },
+            t + 0.2,
+          ).to(
+            secondaryObjWrapper,
+            {
+              xPercent: (SCENES[i].secondaryObjFromX || -50) * -0.2,
+              yPercent: (SCENES[i].secondaryObjFromY || 0) * -0.2,
+              filter: 'blur(20px)',
+              autoAlpha: 0,
+              duration: 0.6,
+              ease: 'none',
+            },
+            t + 0.9,
+          );
+        }
       }
 
       if (tertiaryObjWrapper) {
@@ -620,11 +651,27 @@ export default function App() {
   return (
     <div ref={mainRef} className="slider-app">
       {isInitialLoading && (
-        <div className="initial-loader">
-          <div className="initial-loader-mark">
-            <span className="initial-loader-eyebrow">Programa Ebánico</span>
-            <div className="initial-loader-wordmark">PROGRAMA EBÁNICO</div>
-            <div className="initial-loader-line" />
+        <div className="initial-skeleton" aria-hidden="true">
+          <div className="initial-skeleton-header">
+            <div className="skeleton-block skeleton-logo" />
+            <div className="initial-skeleton-nav">
+              <div className="skeleton-block skeleton-link" />
+              <div className="skeleton-block skeleton-link skeleton-link-short" />
+              <div className="skeleton-block skeleton-cta" />
+            </div>
+          </div>
+          <div className="initial-skeleton-body">
+            <div className="initial-skeleton-copy">
+              <div className="skeleton-block skeleton-kicker" />
+              <div className="skeleton-block skeleton-title-lg" />
+              <div className="skeleton-block skeleton-title-md" />
+              <div className="skeleton-block skeleton-text" />
+              <div className="skeleton-block skeleton-text skeleton-text-short" />
+            </div>
+            <div className="initial-skeleton-media">
+              <div className="skeleton-photo skeleton-photo-back" />
+              <div className="skeleton-photo skeleton-photo-front" />
+            </div>
           </div>
         </div>
       )}
