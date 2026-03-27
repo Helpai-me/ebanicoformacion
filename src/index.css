@@ -113,6 +113,63 @@
     color: #fff;
   }
 
+  .initial-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 18% 22%, rgba(255, 202, 214, 0.34), transparent 26%),
+      radial-gradient(circle at 76% 18%, rgba(182, 204, 255, 0.26), transparent 28%),
+      radial-gradient(circle at 44% 72%, rgba(255, 227, 210, 0.18), transparent 30%),
+      linear-gradient(180deg, #9a92b0 0%, #8f88a9 36%, #736b88 100%);
+  }
+
+  .initial-loader-mark {
+    display: grid;
+    justify-items: center;
+    gap: 0.9rem;
+    text-align: center;
+  }
+
+  .initial-loader-eyebrow {
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.46);
+  }
+
+  .initial-loader-wordmark {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: #fff;
+  }
+
+  .initial-loader-line {
+    width: min(16rem, 42vw);
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 18%, rgba(255, 255, 255, 0.72) 50%, rgba(255, 255, 255, 0.18) 82%, transparent 100%);
+    animation: loaderPulse 1.25s ease-in-out infinite;
+  }
+
+  @keyframes loaderPulse {
+
+    0%,
+    100% {
+      opacity: 0.45;
+      transform: scaleX(0.92);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+  }
+
   /* ── Fixed Top Menu ── */
 
   .slider-header {
@@ -910,7 +967,7 @@
   .obj-pillars-secondary {
     left: 6%;
     top: 12%;
-    width: min(32vw, 420px);
+    width: min(42vw, 620px);
     opacity: 0.96;
     z-index: 24;
   }
@@ -1035,14 +1092,14 @@
     right: 5%;
     top: 52%;
     transform: translateY(-50%);
-    width: min(36vw, 480px);
+    width: min(46vw, 580px);
   }
 
   .obj-pillars {
     left: 2%;
     top: 46%;
     transform: translateY(-50%);
-    width: min(32vw, 420px);
+    width: min(32vw, 520px);
   }
 
   .obj-faq {

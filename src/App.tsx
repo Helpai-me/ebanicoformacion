@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -315,7 +315,42 @@ export default function App() {
   const mainRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeLegalModal, setActiveLegalModal] = useState<LegalModalKey | null>(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const sceneStopsRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    let isCancelled = false;
+    const minimumLoaderTime = 700;
+    const startedAt = Date.now();
+    const assetSources = [
+      ...SCENES.flatMap((scene) => [scene.bg, scene.obj, scene.secondaryObj]),
+      '/img/enseñar3.webp',
+      '/img/Smoke-Element.png',
+    ].filter((src): src is string => Boolean(src));
+
+    const uniqueSources = [...new Set(assetSources)];
+    const preloadImage = (src: string) => new Promise<void>((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve();
+      img.onerror = () => resolve();
+      img.src = src;
+    });
+
+    Promise.all(uniqueSources.map(preloadImage)).finally(() => {
+      const elapsed = Date.now() - startedAt;
+      const wait = Math.max(0, minimumLoaderTime - elapsed);
+
+      window.setTimeout(() => {
+        if (!isCancelled) {
+          setIsInitialLoading(false);
+        }
+      }, wait);
+    });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   useGSAP(() => {
     const sceneEls = gsap.utils.toArray<HTMLElement>('.scene');
@@ -548,6 +583,16 @@ export default function App() {
 
   return (
     <div ref={mainRef} className="slider-app">
+      {isInitialLoading && (
+        <div className="initial-loader">
+          <div className="initial-loader-mark">
+            <span className="initial-loader-eyebrow">Programa Ebánico</span>
+            <div className="initial-loader-wordmark">PROGRAMA EBÁNICO</div>
+            <div className="initial-loader-line" />
+          </div>
+        </div>
+      )}
+
       {/* ── Fixed Top Menu ── */}
       <header className="slider-header">
         <a href="#hero" className="header-logo" onClick={(event) => { event.preventDefault(); scrollToSceneId('hero'); }}>PROGRAMA EBÁNICO</a>
